@@ -2,9 +2,9 @@ require 'rest-client'
 require 'json'
 require 'pry'
 
-def find_char_data(char_hash, character)
+def find_char_data(char_array, character)
 # look for character and return their data
-  char_hash["results"].select do |char|
+  char_array.select do |char|
     char["name"].downcase == character
   end
 end
@@ -46,19 +46,21 @@ def get_all_characters_from_api()
     end
   end
   character_array
-  binding.pry
 end
 
 def get_character_movies_from_api(character)
   #make the web request
-  ## REMOVE THIS BLOCK AND REPLACE WITH METHOD FROM ABOVE
   ## ALSO TWEAK #FIND_CHAR_DATA - will no longer need to access results key
-  all_characters = RestClient.get('http://www.swapi.co/api/people/')
-  character_hash = JSON.parse(all_characters)
+  # REMOVED: Functionality now resides in #get_all_characters_from_api()
+  # all_characters = RestClient.get('http://www.swapi.co/api/people/')
+  # character_hash = JSON.parse(all_characters)
+
+  #make web request for all character data
+  character_array = get_all_characters_from_api()
+
   # iterate over the character hash to find the collection of `films` for the given
   #   `character`
-
-  char_data = find_char_data(character_hash, character)
+  char_data = find_char_data(character_array, character)
   return if char_data.size == 0
   find_film_hash(char_data)
 end
