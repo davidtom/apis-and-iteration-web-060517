@@ -20,8 +20,39 @@ def find_film_hash(char_data)
   end
 end
 
+def get_all_characters_from_api()
+  # set up initial values:
+  #   page status (final or not)
+  final_page = false
+  #   url to pass to api
+  url = "http://www.swapi.co/api/people/"
+  #   array of characters to be built out with api calls
+  character_array = []
+
+  # while we aren't on the final page, make continued api calls and update above values
+  while !final_page
+    #call api with current url
+    api_return = RestClient.get(url)
+    #parse return data into a hash
+    data_hash = JSON.parse(api_return)
+    #add character data (hashes) into character_array (array of hashes)
+    character_array.concat(data_hash["results"])
+
+    #check to see if we are at the final page or not and update values accordingly
+    if data_hash["next"] == nil
+      final_page = true
+    else
+      url = data_hash["next"]
+    end
+  end
+  character_array
+  binding.pry
+end
+
 def get_character_movies_from_api(character)
   #make the web request
+  ## REMOVE THIS BLOCK AND REPLACE WITH METHOD FROM ABOVE
+  ## ALSO TWEAK #FIND_CHAR_DATA - will no longer need to access results key
   all_characters = RestClient.get('http://www.swapi.co/api/people/')
   character_hash = JSON.parse(all_characters)
   # iterate over the character hash to find the collection of `films` for the given
@@ -51,6 +82,8 @@ def show_character_movies(character)
     puts "This is not the droid you're looking for!"
   end
 end
+
+get_all_characters_from_api
 
 ## BONUS
 
